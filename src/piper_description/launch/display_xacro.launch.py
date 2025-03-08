@@ -13,12 +13,12 @@ def generate_launch_description():
     ld = LaunchDescription()
     pkg_share = FindPackageShare(package=package_name).find(package_name)
     urdf_model_path = os.path.join(pkg_share, f'urdf/{urdf_name}')
-    
+
     # 使用subprocess调用xacro命令来生成URDF文件内容
     urdf_content = subprocess.check_output(['xacro', urdf_model_path]).decode('utf-8')
     robot_description = {'robot_description': urdf_content}
 
-    
+
     # 使用指定的RViz配置文件路径
     # default_rviz_config_path = os.path.join(pkg_share, 'rviz/urdf.rviz')
     specific_rviz_config_path = os.path.join(pkg_share, 'rviz/piper_ctrl.rviz')
@@ -58,8 +58,8 @@ def generate_launch_description():
 
     # Add all actions
     ld.add_action(rviz_arg)
-    ld.add_action(joint_state_publisher_node)
+    # ld.add_action(joint_state_publisher_node)
     ld.add_action(robot_state_publisher_node)
     ld.add_action(rviz2_node)
-    
+
     return ld
