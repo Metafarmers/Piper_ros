@@ -208,13 +208,13 @@ class PiperRosNode(Node):
             self.piper.MotionCtrl_1(0x00, 0x00, 0x00)
             self.piper.MotionCtrl_2(0x01, 0x02, 50)
             self.piper.EndPoseCtrl(x, y, z, rx, ry, rz)
-            gripper = round(pos_data.gripper * 1000 * 1000)
+            gripper = round(pos_data.gripper * 1000 * 180/3.14)
             if pos_data.gripper > 80000:
                 gripper = 80000
             if pos_data.gripper < 0:
                 gripper = 0
             if self.gripper_exist:
-                self.piper.GripperCtrl(abs(gripper), 1000, 0x01, 0)
+                self.piper.GripperCtrl(abs(gripper), 1000, 0x01, 0x00) # position, effort,code,setzero
             self.piper.MotionCtrl_2(0x01, 0x00, 50)
 
     def joint_callback(self, joint_data):
@@ -228,7 +228,7 @@ class PiperRosNode(Node):
 
         # 创建一个字典来存储关节名称与位置的映射
         joint_positions = {}
-        joint_6 = 0
+        joint_7 = 0
 
         # 遍历joint_data.name来映射位置
         for idx, joint_name in enumerate(joint_data.name):
@@ -238,9 +238,9 @@ class PiperRosNode(Node):
         # 获取第7个关节的位置
         if len(joint_data.position) >= 7:
             # self.get_logger().info(f"joint_7: {joint_data.position[6]}")
-            joint_6 = round(joint_data.position[6] * 1000 * 1000)
-            if self.rviz_ctrl_flag:
-                joint_6 = joint_6 * 2
+            joint_7 = round(joint_data.position[6] * factor) # position, effort,code,setzero
+            # if self.rviz_ctrl_flag:
+            #     joint_6 = joint_6 * 2
 
         # 控制电机速度
         if self.GetEnableFlag():
@@ -280,9 +280,9 @@ class PiperRosNode(Node):
                     else:
                         # self.get_logger().warning("Gripper effort is NaN, using default value.")
                         gripper_effort = 0  # 设置默认值
-                    self.piper.GripperCtrl(abs(joint_6), gripper_effort, 0x01, 0)
+                    self.piper.GripperCtrl(abs(joint_7), gripper_effort, 0x01, 0)
                 else:
-                    self.piper.GripperCtrl(abs(joint_6), 1000, 0x01, 0)
+                    self.piper.GripperCtrl(abs(joint_7), 1000, 0x01, 0)
 
 
     def enable_callback(self, enable_flag: Bool):
