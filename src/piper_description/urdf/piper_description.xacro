@@ -384,7 +384,7 @@
     type="revolute">
     <origin
       xyz="8.8259E-05 -0.091 0"
-      rpy="1.5708 0 0" />
+      rpy="1.5708 1.5708 0" />
     <parent
       link="link5" />
     <child
@@ -436,7 +436,7 @@
           filename="package://piper_description/meshes/gripper_base.STL" />
       </geometry>
     </collision>
-  </link> 
+  </link>
   <joint
     name="joint6_to_gripper_base"
     type="fixed">
@@ -594,7 +594,7 @@
         <legacyModeNS>true</legacyModeNS>
     </plugin>
   </gazebo>
- 
+
   <!-- <gazebo reference="base_link">
     <material>Gazebo/Black</material>
   </gazebo>
@@ -602,7 +602,7 @@
   <gazebo reference="link1">
     <material>Gazebo/White</material>
   </gazebo>
- 
+
   <gazebo reference="link2">
     <material>Gazebo/White</material>
   </gazebo>
@@ -610,23 +610,23 @@
   <gazebo reference="link3">
     <material>Gazebo/White</material>
   </gazebo>
- 
+
   <gazebo reference="link4">
     <material>Gazebo/Black</material>
   </gazebo>
- 
+
   <gazebo reference="link5">
     <material>Gazebo/White</material>
   </gazebo>
- 
+
   <gazebo reference="link6">
     <material>Gazebo/White</material>
   </gazebo>
- 
+
   <gazebo reference="link7">
     <material>Gazebo/Orange</material>
   </gazebo>
- 
+
   <gazebo reference="link8">
     <material>Gazebo/Orange</material>
   </gazebo> -->
