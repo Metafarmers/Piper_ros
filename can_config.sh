@@ -107,7 +107,7 @@ fi
 
 # Pre-defined USB ports, target interface names, and their bitrates (used when multiple CAN modules)
 if [ "$EXPECTED_CAN_COUNT" -ne 1 ]; then
-    declare -A USB_PORTS 
+    declare -A USB_PORTS
     USB_PORTS["1-1:1.0"]="can_left:1000000"
     USB_PORTS["1-3:1.0"]="can_right:1000000"
 fi
@@ -132,7 +132,7 @@ fi
 if [ "$EXPECTED_CAN_COUNT" -eq 1 ]; then
     if [ -n "$USB_ADDRESS" ]; then
         echo "Detected USB hardware address parameter: $USB_ADDRESS"
-        
+
         # Use ethtool to find the CAN interface corresponding to the USB hardware address
         INTERFACE_NAME=""
         for iface in $(ip -br link show type can | awk '{print $1}'); do
@@ -142,7 +142,7 @@ if [ "$EXPECTED_CAN_COUNT" -eq 1 ]; then
                 break
             fi
         done
-        
+
         if [ -z "$INTERFACE_NAME" ]; then
             echo "Error: Unable to find CAN interface corresponding to USB hardware address $USB_ADDRESS."
             exit 1
@@ -152,7 +152,7 @@ if [ "$EXPECTED_CAN_COUNT" -eq 1 ]; then
     else
         # Get the unique CAN interface
         INTERFACE_NAME=$(ip -br link show type can | awk '{print $1}')
-        
+
         # Check if interface name was obtained
         if [ -z "$INTERFACE_NAME" ]; then
             echo "Error: Unable to detect CAN interface."
@@ -170,7 +170,7 @@ if [ "$EXPECTED_CAN_COUNT" -eq 1 ]; then
 
     if [ "$IS_LINK_UP" == "yes" ] && [ "$CURRENT_BITRATE" -eq "$DEFAULT_BITRATE" ]; then
         echo "Interface $INTERFACE_NAME is already activated with bitrate $DEFAULT_BITRATE"
-        
+
         # Check if interface name matches the default name
         if [ "$INTERFACE_NAME" != "$DEFAULT_CAN_NAME" ]; then
             echo "Renaming interface $INTERFACE_NAME to $DEFAULT_CAN_NAME"
@@ -188,13 +188,13 @@ if [ "$EXPECTED_CAN_COUNT" -eq 1 ]; then
         else
             echo "Interface $INTERFACE_NAME is not activated or bitrate not set."
         fi
-        
+
         # Set interface bitrate and activate
         sudo ip link set "$INTERFACE_NAME" down
         sudo ip link set "$INTERFACE_NAME" type can bitrate $DEFAULT_BITRATE
         sudo ip link set "$INTERFACE_NAME" up
         echo "Interface $INTERFACE_NAME has been reset to bitrate $DEFAULT_BITRATE and activated."
-        
+
         # Rename interface to default name
         if [ "$INTERFACE_NAME" != "$DEFAULT_CAN_NAME" ]; then
             echo "Renaming interface $INTERFACE_NAME to $DEFAULT_CAN_NAME"
@@ -218,18 +218,18 @@ else
     for iface in $(ip -br link show type can | awk '{print $1}'); do
         # Use ethtool to get bus-info
         BUS_INFO=$(sudo ethtool -i "$iface" | grep "bus-info" | awk '{print $2}')
-        
+
         if [ -z "$BUS_INFO" ];then
             echo "Error: Unable to obtain bus-info for interface $iface."
             continue
         fi
-        
+
         echo "Interface $iface inserted in USB port $BUS_INFO"
 
         # Check if bus-info is in predefined USB port list
         if [ -n "${USB_PORTS[$BUS_INFO]}" ];then
             IFS=':' read -r TARGET_NAME TARGET_BITRATE <<< "${USB_PORTS[$BUS_INFO]}"
-            
+
             # Check if current interface is activated
             IS_LINK_UP=$(ip link show "$iface" | grep -q "UP" && echo "yes" || echo "no")
 
@@ -238,7 +238,7 @@ else
 
             if [ "$IS_LINK_UP" == "yes" ] && [ "$CURRENT_BITRATE" -eq "$TARGET_BITRATE" ]; then
                 echo "Interface $iface is already activated with bitrate $TARGET_BITRATE"
-                
+
                 # Check if interface name matches target name
                 if [ "$iface" != "$TARGET_NAME" ]; then
                     echo "Renaming interface $iface to $TARGET_NAME"
@@ -256,13 +256,13 @@ else
                 else
                     echo "Interface $iface is not activated or bitrate not set."
                 fi
-                
+
                 # Set interface bitrate and activate
                 sudo ip link set "$iface" down
                 sudo ip link set "$iface" type can bitrate $TARGET_BITRATE
                 sudo ip link set "$iface" up
                 echo "Interface $iface has been reset to bitrate $TARGET_BITRATE and activated."
-                
+
                 # Rename interface to target name
                 if [ "$iface" != "$TARGET_NAME" ]; then
                     echo "Renaming interface $iface to $TARGET_NAME"
